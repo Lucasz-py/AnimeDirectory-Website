@@ -7,7 +7,7 @@ interface LiquidEtherProps {
 }
 
 const LiquidEtherBackground: React.FC<LiquidEtherProps> = ({
-    colors = ["#52227F", "#FFFFFF", "#819EEF"],
+    colors = ["#191970", "#BA55D3", "#4169E1", "#87CEFA"], // Azul medianoche, Medium orchid, Royal blue, Light sky blue
     particleCount = 50
 }) => {
     const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -30,44 +30,6 @@ const LiquidEtherBackground: React.FC<LiquidEtherProps> = ({
             left: 0,
             width: '100%',
             height: '100%'
-        },
-        content: {
-            position: 'relative' as const,
-            zIndex: 10,
-            display: 'flex',
-            flexDirection: 'column' as const,
-            justifyContent: 'center',
-            alignItems: 'center',
-            color: 'white',
-            textAlign: 'center' as const,
-            padding: '2rem'
-        },
-        title: {
-            fontSize: '3.5rem',
-            marginBottom: '1rem',
-            background: 'linear-gradient(90deg, #ff00cc, #3333ff, #00ffcc)',
-            WebkitBackgroundClip: 'text' as const,
-            backgroundClip: 'text' as const,
-            color: 'transparent',
-            animation: 'gradientMove 8s ease infinite'
-        },
-        text: {
-            fontSize: '1.2rem',
-            maxWidth: '600px',
-            margin: '0 auto 2rem',
-            lineHeight: 1.6
-        },
-        button: {
-            display: 'inline-block',
-            padding: '12px 30px',
-            background: 'rgba(255, 255, 255, 0.1)',
-            color: 'white',
-            textDecoration: 'none',
-            borderRadius: '30px',
-            border: '1px solid rgba(255, 255, 255, 0.2)',
-            backdropFilter: 'blur(10px)',
-            transition: 'all 0.3s ease',
-            cursor: 'pointer'
         }
     };
 
@@ -158,53 +120,9 @@ const LiquidEtherBackground: React.FC<LiquidEtherProps> = ({
         };
     }, [colors, particleCount]);
 
-    // Función para manejar el hover del botón
-    const handleButtonHover = (e: React.MouseEvent<HTMLButtonElement>) => {
-        e.currentTarget.style.background = 'rgba(255, 255, 255, 0.2)';
-        e.currentTarget.style.transform = 'translateY(-3px)';
-        e.currentTarget.style.boxShadow = '0 10px 20px rgba(0, 0, 0, 0.2)';
-    };
-
-    // Función para manejar cuando el mouse sale del botón
-    const handleButtonLeave = (e: React.MouseEvent<HTMLButtonElement>) => {
-        e.currentTarget.style.background = 'rgba(255, 255, 255, 0.1)';
-        e.currentTarget.style.transform = 'translateY(0px)';
-        e.currentTarget.style.boxShadow = 'none';
-    };
-
     return (
         <div style={styles.container}>
             <canvas ref={canvasRef} style={styles.canvas} />
-            <div style={styles.content}>
-                <h1 style={styles.title}>Lucasz-py</h1>
-                <p style={styles.text}>
-                    "###################################################"
-                </p>
-                <button
-                    style={styles.button}
-                    onMouseOver={handleButtonHover}
-                    onMouseOut={handleButtonLeave}
-                >
-                    Explorar Efecto
-                </button>
-            </div>
-
-            {/* Incluimos los keyframes en el estilo para la animación */}
-            <style>
-                {`
-          @keyframes gradientMove {
-            0% {
-              background-position: 0% 50%;
-            }
-            50% {
-              background-position: 100% 50%;
-            }
-            100% {
-              background-position: 0% 50%;
-            }
-          }
-        `}
-            </style>
         </div>
     );
 };
