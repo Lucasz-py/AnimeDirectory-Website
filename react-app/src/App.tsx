@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import LiquidEtherBackground from './components/LiquidEtherBackground';
 import Login from './components/Login';
 import supabase from './lib/supabase';
