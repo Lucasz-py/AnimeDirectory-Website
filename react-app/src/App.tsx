@@ -1,5 +1,4 @@
 import { useState, useEffect } from 'react';
-import LiquidEtherBackground from './components/LiquidEtherBackground';
 import Login from './components/Login';
 import DirectorioAnimes from './components/DirectorioAnimes';
 import supabase from './lib/supabase';
@@ -62,14 +61,22 @@ function App() {
   };
 
   const handleLogout = async (): Promise<void> => {
-    await supabase.auth.signOut();
-    setUser(null);
+    try {
+      const { error } = await supabase.auth.signOut();
+      if (error) {
+        throw error;
+      }
+      setUser(null);
+    } catch (error: unknown) {
+      console.error('Error al cerrar sesión:', error);
+      const errorMessage = error instanceof Error ? error.message : 'Error al cerrar sesión';
+      setError(errorMessage);
+    }
   };
 
   if (loading) {
     return (
       <div className="App">
-        <LiquidEtherBackground />
         <div className="loading-container">
           <div className="loading-spinner"></div>
           <p>Cargando...</p>
@@ -81,7 +88,6 @@ function App() {
   if (!user) {
     return (
       <div className="App">
-        <LiquidEtherBackground />
         <Login onLogin={handleLogin} onError={handleError} />
         {error && (
           <div className="error-toast">
@@ -92,7 +98,6 @@ function App() {
     );
   }
 
-  // DIRECTORIO CON BOTÓN DE LOGOUT
   return (
     <div className="App">
       <DirectorioAnimes onLogout={handleLogout} />

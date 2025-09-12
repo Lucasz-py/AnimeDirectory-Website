@@ -8,6 +8,28 @@
     justify-content: center;
     align-items: center;
     z-index: 20;
+    /* Fondo con imagen y difuminado */
+    background-image: url('../../public/Background-anime.jpg');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+
+/* Capa de difuminado - AJUSTA ESTE VALOR PARA CAMBIAR EL DIFUMINADO */
+.login-overlay::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.4);
+    /* Opacidad del difuminado */
+    backdrop-filter: blur(5px);
+    /* ← CAMBIA ESTE VALOR para más/menos difuminado */
+    -webkit-backdrop-filter: blur(5px);
+    /* Para compatibilidad con Safari */
+    z-index: -1;
 }
 
 .login-container {
@@ -21,7 +43,9 @@
 
 .login-card {
     background: rgba(255, 255, 255, 0.1);
-    backdrop-filter: blur(10px);
+    backdrop-filter: blur(15px);
+    /* Difuminado adicional para la tarjeta */
+    -webkit-backdrop-filter: blur(15px);
     padding: 2.5rem;
     border-radius: 16px;
     box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
@@ -32,7 +56,7 @@
 
 .login-title {
     text-align: center;
-    color: rgb(164, 41, 221);
+    color: white;
     font-size: 2.5rem;
     font-weight: bold;
     margin-bottom: 2rem;
@@ -132,11 +156,4 @@
 .switch-button:disabled {
     opacity: 0.6;
     cursor: not-allowed;
-}
-
-/* Estilos para estado de carga */
-.login-button:disabled {
-    opacity: 0.7;
-    cursor: not-allowed;
-    transform: none !important;
 }
