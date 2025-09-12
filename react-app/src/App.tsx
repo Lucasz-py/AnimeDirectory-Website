@@ -61,6 +61,11 @@ function App() {
     setError(errorMessage);
   };
 
+  const handleLogout = async (): Promise<void> => {
+    await supabase.auth.signOut();
+    setUser(null);
+  };
+
   if (loading) {
     return (
       <div className="App">
@@ -87,8 +92,12 @@ function App() {
     );
   }
 
-  // SOLO DIRECTORIO - SIN BACKGROUND
-  return <DirectorioAnimes />;
+  // DIRECTORIO CON BOTÓN DE LOGOUT
+  return (
+    <div className="App">
+      <DirectorioAnimes onLogout={handleLogout} />
+    </div>
+  );
 }
 
 export default App;

@@ -12,7 +12,11 @@ interface Anime {
     rating: number;
 }
 
-const DirectorioAnimes: React.FC = () => {
+interface DirectorioAnimesProps {
+    onLogout?: () => void;
+}
+
+const DirectorioAnimes: React.FC<DirectorioAnimesProps> = ({ onLogout }) => {
     const [animes, setAnimes] = useState<Anime[]>([
         {
             id: 1,
@@ -65,40 +69,34 @@ const DirectorioAnimes: React.FC = () => {
         setMostrarFormulario(false);
     };
 
+    const handleLogout = () => {
+        if (onLogout) {
+            onLogout();
+        }
+    };
+
     return (
         <div className="directorio-completo">
             {/* Fondo integrado */}
-            <div className="directorio-fondo">
-                {/* Puedes agregar aquí un fondo simple o mantener el estilo CSS */}
-            </div>
+            <div className="directorio-fondo"></div>
 
             {/* Contenido del directorio */}
             <div className="directorio-contenido">
                 <header className="directorio-header">
-                    <h1>Tanime.net</h1>
-                    <nav className="directorio-nav">
-                        <button className="nav-btn">Miranda</button>
-                        <button className="nav-btn">Vistas</button>
-                        <button className="nav-btn">Por ver</button>
-                        <button className="nav-btn">Favorite</button>
-                        <button className="nav-btn">Dropped</button>
-                    </nav>
-
-                    <nav className="directorio-nav-secondary">
-                        <button className="nav-btn">Hierate</button>
-                        <button className="nav-btn">Comunidad</button>
-                        <button className="nav-btn">Top</button>
-                        <button className="nav-btn">Historical</button>
-                        <button className="nav-btn">Perfil</button>
-                    </nav>
+                    <div className="header-top">
+                        <h1>⭐ Mi biblioteca de animes</h1>
+                        <div className="header-buttons">
+                            <button onClick={() => setMostrarFormulario(true)} className="btn-primary">
+                                + Agregar Anime
+                            </button>
+                            {onLogout && (
+                                <button onClick={handleLogout} className="logout-btn">
+                                    Cerrar Sesión
+                                </button>
+                            )}
+                        </div>
+                    </div>
                 </header>
-
-                {/* Botón para agregar nuevo anime */}
-                <div className="agregar-anime-btn">
-                    <button onClick={() => setMostrarFormulario(true)} className="btn-primary">
-                        + Agregar Anime
-                    </button>
-                </div>
 
                 {/* Formulario para agregar anime */}
                 {mostrarFormulario && (
