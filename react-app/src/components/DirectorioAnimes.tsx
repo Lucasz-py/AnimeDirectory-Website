@@ -37,7 +37,37 @@ const DirectorioAnimes: React.FC<DirectorioAnimesProps> = ({ onLogout }) => {
             fechaVisto: '11/8/2025, 21:01',
             estado: 'Favorito',
             rating: 5
-        }
+        },
+        {
+            id: 3,
+            titulo: 'Initial D',
+            portada: 'https://wallpapers.com/images/hd/initial-d-background-s3kkjwcroepg2urt.jpg',
+            descripcion: 'Takumi Fujiwara trabaja como bombero en una estación de servicio por el dia, y entregando tofu para la tienda de su padre por las noches. Poco sabe de sus excelentes habilidades al volante, y con el Toyota Sprinter AE86 Trueno es el mejor conductor amateur en la carretera del monte Akina. A causa de esto, grupos de carrera de toda la prefectura de Gunma buscan desafiar a a Takumi para ver si realmente tiene lo necesario para ser una estrella de la calle.',
+            generos: ['Carreras', 'Drama'],
+            fechaVisto: '11/8/2025, 06:28',
+            estado: 'Favorito',
+            rating: 4.5
+        },
+        {
+            id: 4,
+            titulo: 'Owari no seraph',
+            portada: 'https://cdn.hobbyconsolas.com/sites/navi.axelspringer.es/public/media/image/2015/04/463084-anime-owari-no-seraph-castellano.jpg?tf=3840x',
+            descripcion: 'La historia tiene lugar en un mundo donde un virus ha asolado a toda la humanidad a excepción de los niños, que fueron esclavizados por vampiros. El protagonista es Yuichiro Hyakuya, un esclavo humano que sueña con hacerse lo suficientemente fuerte como para matar a todos los vampiros.',
+            generos: ['Sobrenatural', 'Drama'],
+            fechaVisto: '11/8/2025, 04:28',
+            estado: 'Favorito',
+            rating: 4.5
+        },
+        {
+            id: 5,
+            titulo: 'Dragon Ball Super',
+            portada: 'https://i.blogs.es/9d4077/dragon-ball-super/650_1200.jpeg',
+            descripcion: 'La serie se desarrollara en la tierra, tiempo después de la lucha terrible contra Majin Buu. Por órdenes de Milk, Goku trabaja fuertemente todos los días en la agricultura. Sin embargo también tiene algunos momentos para entrenar. Por otra parte, Mr Satan, luego de haber salvado al planeta por segunda vez recibe el ¡¿Premio Mundial de la Paz?!',
+            generos: ['Aventura', 'Accion', 'Comedia'],
+            fechaVisto: '11/8/2025, 04:28',
+            estado: 'Visto',
+            rating: 4
+        },
     ]);
 
     const [mostrarFormulario, setMostrarFormulario] = useState(false);
@@ -84,7 +114,7 @@ const DirectorioAnimes: React.FC<DirectorioAnimesProps> = ({ onLogout }) => {
             <div className="directorio-contenido">
                 <header className="directorio-header">
                     <div className="header-top">
-                        <h1>⭐ Mi biblioteca de animes</h1>
+                        <h1>Mi biblioteca de animes</h1>
                         <div className="header-buttons">
                             <button onClick={() => setMostrarFormulario(true)} className="btn-primary">
                                 + Agregar Anime
