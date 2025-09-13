@@ -4,7 +4,7 @@ import { User, UserProfile } from '../types/supabase';
 import './DirectorioAnimes.css';
 
 // Definir tipo para el estado
-type EstadoAnime = 'Visto' | 'Viéndolo' | 'Por ver' | 'Favorito' | 'Dropped';
+type EstadoAnime = 'Visto' | 'Viéndolo' | 'Por ver' | 'Favorito';
 
 interface Anime {
     id: number;
@@ -13,7 +13,6 @@ interface Anime {
     portada: string;
     descripcion: string;
     generos: string[];
-    fecha_visto: string;
     estado: EstadoAnime;
     rating: number;
     created_at?: string;
@@ -34,7 +33,6 @@ const DirectorioAnimes: React.FC<DirectorioAnimesProps> = ({ user, onLogout }) =
         portada: '',
         descripcion: '',
         generos: [] as string[],
-        fecha_visto: new Date().toLocaleString(),
         estado: 'Visto' as EstadoAnime,
         rating: 0
     });
@@ -122,7 +120,6 @@ const DirectorioAnimes: React.FC<DirectorioAnimesProps> = ({ user, onLogout }) =
                     portada: '',
                     descripcion: '',
                     generos: [],
-                    fecha_visto: new Date().toLocaleString(),
                     estado: 'Visto',
                     rating: 0
                 });
@@ -174,7 +171,7 @@ const DirectorioAnimes: React.FC<DirectorioAnimesProps> = ({ user, onLogout }) =
                     <div className="header-top">
                         {/* Izquierda: Texto "Biblioteca" */}
                         <div className="header-left">
-                            <h1 className="header-title">Biblioteca</h1>
+                            <h1 className="header-title"> ⛩️BIBLIOTECA</h1>
                         </div>
 
                         {/* Centro: Logo */}
@@ -204,7 +201,7 @@ const DirectorioAnimes: React.FC<DirectorioAnimesProps> = ({ user, onLogout }) =
                 {mostrarFormulario && (
                     <div className="formulario-overlay">
                         <div className="formulario-anime">
-                            <h2>Agregar Nuevo Anime</h2>
+                            <h2>-Agregar Nuevos Animes-</h2>
 
                             <div className="form-group">
                                 <label>Título:</label>
@@ -259,16 +256,15 @@ const DirectorioAnimes: React.FC<DirectorioAnimesProps> = ({ user, onLogout }) =
                                     <option value="Viéndolo">Viéndolo</option>
                                     <option value="Por ver">Por ver</option>
                                     <option value="Favorito">Favorito</option>
-                                    <option value="Dropped">Dropped</option>
                                 </select>
                             </div>
 
                             <div className="form-group">
-                                <label>Rating (0-5):</label>
+                                <label>Rating (0-10):</label>
                                 <input
                                     type="number"
                                     min="0"
-                                    max="5"
+                                    max="10"
                                     step="0.5"
                                     value={nuevoAnime.rating}
                                     onChange={(e) => setNuevoAnime({ ...nuevoAnime, rating: Number(e.target.value) })}

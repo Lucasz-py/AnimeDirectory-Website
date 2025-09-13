@@ -30,17 +30,17 @@
     align-items: center;
     flex-wrap: wrap;
     gap: 20px;
-    padding: 20px;
+    padding: 15px;
     background: rgba(255, 255, 255, 0.05);
     border-radius: 16px;
     backdrop-filter: blur(10px);
-    border: 1px solid rgba(255, 255, 255, 0.1);
+    border: 2px solid rgba(160, 47, 204, 0.295);
 }
 
 .header-title {
-    font-size: 2.8rem;
+    font-size: 3rem;
     font-weight: bold;
-    background: linear-gradient(90deg, #ff00cc, #3333ff, #00ffcc);
+    background: linear-gradient(90deg, #2a2df1b9, #be33ff, #7132c4);
     -webkit-background-clip: text;
     background-clip: text;
     color: transparent;
@@ -60,13 +60,14 @@
     color: white;
     padding: 12px 24px;
     border: none;
-    border-radius: 8px;
+    border-radius: 80px;
     cursor: pointer;
-    font-size: 1rem;
+    font-size: 1.1rem;
     font-weight: 600;
     transition: all 0.3s ease;
     backdrop-filter: blur(10px);
-    border: 1px solid rgba(255, 255, 255, 0.2);
+    font-family: 'Cascadia Code', monospace;
+    margin-right: 12px;
 }
 
 .btn-primary:hover {
@@ -74,22 +75,43 @@
     box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
 }
 
+.btn-secondary {
+    background: linear-gradient(135deg, #413a3a 0%, #111111 100%);
+    color: white;
+    padding: 12px 24px;
+    border: none;
+    border-radius: 80px;
+    cursor: pointer;
+    font-size: 1.1rem;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    backdrop-filter: blur(10px);
+    font-family: 'Cascadia Code', monospace;
+    margin-right: 12px;
+}
+
+.btn-secondary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(204, 18, 18, 0.4);
+}
+
 .logout-btn {
     background: rgba(239, 68, 68, 0.8);
     color: white;
     padding: 12px 24px;
     border: none;
-    border-radius: 8px;
+    border-radius: 80px;
     cursor: pointer;
     font-weight: 600;
+    font-size: 1.1rem;
     transition: all 0.3s ease;
     backdrop-filter: blur(10px);
-    border: 1px solid rgba(255, 255, 255, 0.2);
+    font-family: 'Cascadia Code', monospace;
 }
 
 .logout-btn:hover {
-    background: rgba(239, 68, 68, 1);
     transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(239, 68, 68, 0.4);
 }
 
 @media (max-width: 768px) {
@@ -178,11 +200,11 @@
 }
 
 .anime-card {
-    background: rgba(255, 255, 255, 0.05);
+    background: rgba(255, 255, 255, 0.103);
     border-radius: 12px;
     overflow: hidden;
     backdrop-filter: blur(10px);
-    border: 1px solid rgba(255, 255, 255, 0.1);
+    border: 1.5px solid rgba(173, 14, 236, 0.212);
     transition: transform 0.3s ease;
 }
 
@@ -273,109 +295,14 @@
     align-items: center;
 }
 
-.ver-mas-btn,
-.editar-btn,
-.eliminar-btn {
-    padding: 6px 12px;
-    border: none;
-    border-radius: 6px;
-    cursor: pointer;
-    font-size: 0.8rem;
-    transition: all 0.3s ease;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    min-width: 50px;
-    height: 32px;
-}
-
-.ver-mas-btn {
-    background: rgba(102, 126, 234, 0.8);
-    color: white;
-}
-
-.ver-mas-btn:hover {
-    background: rgba(102, 126, 234, 1);
-    transform: translateY(-2px);
-}
-
-.editar-btn {
-    background: rgba(255, 193, 7, 0.8);
-    color: #333;
-}
-
-.editar-btn:hover {
-    background: rgba(255, 193, 7, 1);
-    transform: translateY(-2px);
-}
-
-.eliminar-btn {
-    background: rgba(239, 68, 68, 0.8);
-    color: white;
-}
-
-.eliminar-btn:hover:not(:disabled) {
-    background: rgba(239, 68, 68, 1);
-    transform: translateY(-2px);
-}
-
-.eliminar-btn:disabled {
-    opacity: 0.6;
-    cursor: not-allowed;
-}
-
-.anime-card.expandido {
-    grid-column: 1 / -1;
-    max-width: 800px;
-    margin: 0 auto;
-    display: flex;
-    flex-direction: row;
-    height: auto;
-}
-
-.anime-card.expandido .anime-portada {
-    flex: 0 0 300px;
-    height: 400px;
-}
-
-.anime-card.expandido .anime-info {
-    flex: 1;
-    padding: 25px;
-}
-
-.anime-descripcion-completa {
-    margin: 15px 0;
-}
-
-.anime-descripcion-completa h4 {
-    color: #87CEFA;
-    margin-bottom: 8px;
-    font-size: 1.1rem;
-}
-
-.anime-descripcion-completa p {
-    line-height: 1.6;
-    font-size: 1rem;
-}
-
-.anime-detalles-expandidos {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-    gap: 15px;
-    margin: 20px 0;
-    padding: 15px;
-    background: rgba(255, 255, 255, 0.05);
-    border-radius: 10px;
-}
-
 .detalle-item {
     display: flex;
     flex-direction: column;
-    gap: 5px;
+    gap: 500px;
 }
 
 .detalle-item strong {
-    color: #87CEFA;
+    color: #ee2b2b;
     font-size: 0.9rem;
 }
 
@@ -409,6 +336,7 @@
     max-height: 90vh;
     overflow-y: auto;
     color: white;
+    font-family: 'Cascadia Code', monospace;
 }
 
 .formulario-anime h2 {
@@ -427,6 +355,7 @@
     font-weight: 600;
     color: #87CEFA;
     font-size: 0.95rem;
+    font-family: 'Cascadia Code', monospace;
 }
 
 .form-group input,
@@ -440,6 +369,7 @@
     color: white;
     font-size: 1rem;
     transition: all 0.3s ease;
+    font-family: 'Cascadia Code', monospace;
 }
 
 .form-group input:focus,
@@ -449,6 +379,12 @@
     border-color: #667eea;
     background: rgba(255, 255, 255, 0.15);
     box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.2);
+    background-color: #1e1e2f;
+    /* fondo oscuro */
+    color: white;
+    /* texto claro */
+    border: 1px solid #764ba2;
+    font-family: 'Cascadia Code', monospace;
 }
 
 .form-buttons {
@@ -463,81 +399,6 @@
     grid-column: 1 / -1;
     padding: 40px;
     color: rgba(255, 255, 255, 0.7);
-}
-
-@media (max-width: 480px) {
-    .anime-card.expandido {
-        flex-direction: column;
-    }
-
-    .anime-card.expandido .anime-portada {
-        flex: 0 0 250px;
-        width: 100%;
-    }
-
-    .anime-detalles-expandidos {
-        grid-template-columns: 1fr;
-    }
-
-    .ver-mas-btn span,
-    .editar-btn span,
-    .eliminar-btn span {
-        display: none;
-    }
-
-    .ver-mas-btn::before {
-        content: '▼';
-    }
-
-    .ver-mas-btn[data-expanded="true"]::before {
-        content: '▲';
-    }
-
-    .editar-btn::before {
-        content: '✏️';
-    }
-
-    .eliminar-btn::before {
-        content: '🗑️';
-    }
-}
-
-.anime-card.expandido .anime-actions {
-    justify-content: flex-start;
-    gap: 10px;
-}
-
-.ver-mas-btn:hover::after,
-.editar-btn:hover::after,
-.eliminar-btn:hover::after {
-    content: attr(title);
-    position: absolute;
-    bottom: -30px;
-    left: 50%;
-    transform: translateX(-50%);
-    background: rgba(0, 0, 0, 0.8);
-    color: rgb(253, 252, 252);
-    padding: 5px 10px;
-    border-radius: 4px;
-    font-size: 0.7rem;
-    white-space: nowrap;
-    z-index: 1000;
-}
-
-.ver-mas-btn,
-.editar-btn,
-.eliminar-btn {
-    position: relative;
-}
-
-.ver-mas-btn {
-    font-size: 0.80rem;
-}
-
-.ver-mas-btn:active,
-.editar-btn:active,
-.eliminar-btn:active {
-    transform: translateY(0);
 }
 
 .no-user-message {
