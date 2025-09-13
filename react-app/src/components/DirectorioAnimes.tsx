@@ -1,121 +1,193 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
+import supabase from '../lib/supabase';
+import { User, UserProfile } from '../types/supabase';
 import './DirectorioAnimes.css';
+
+// Definir tipo para el estado
+type EstadoAnime = 'Visto' | 'Viéndolo' | 'Por ver' | 'Favorito' | 'Dropped';
 
 interface Anime {
     id: number;
+    user_id: string;
     titulo: string;
     portada: string;
     descripcion: string;
     generos: string[];
-    fechaVisto: string;
-    estado: 'Visto' | 'Viéndolo' | 'Por ver' | 'Favorito' | 'Dropped';
+    fecha_visto: string;
+    estado: EstadoAnime;
     rating: number;
+    created_at?: string;
 }
 
 interface DirectorioAnimesProps {
+    user: User | null;
+    userProfile?: UserProfile | null;
     onLogout?: () => void;
 }
 
-const DirectorioAnimes: React.FC<DirectorioAnimesProps> = ({ onLogout }) => {
-    const [animes, setAnimes] = useState<Anime[]>([
-        {
-            id: 1,
-            titulo: 'Sousou no Frieren',
-            portada: 'https://a.storyblok.com/f/178900/1269x712/c2294b9ce0/frieren-anime-cast.jpg',
-            descripcion: 'Tras derrotar al rey demonio, los héroes se separan y Frieren, una elfa maga que no envejece, ve cómo sus compañeros mueren con el tiempo. Con una nueva aprendiz humana, recorre los lugares de sus antiguas aventuras y aprende a valorar los lazos que no supo atesorar.',
-            generos: ['Fantasia', 'Drama', 'Aventura'],
-            fechaVisto: '11/8/2025, 06:28',
-            estado: 'Favorito',
-            rating: 5
-        },
-        {
-            id: 2,
-            titulo: 'Cyberpunk: Edgerunners',
-            portada: 'https://wallpapercave.com/wp/wp11495464.jpg',
-            descripcion: 'Cyberpunk: Edgerunners cuenta una historia independiente sobre un niño de la calle que intenta sobrevivir en una ciudad del futuro obsesionada con la tecnología y la modificación del cuerpo. Teniendo todo que perder, elige mantenerse con vida convirtiéndose en un edgerunner, un forajido mercenario también conocido como cyberpunk.',
-            generos: ['Accion', 'Slice of Life'],
-            fechaVisto: '11/8/2025, 21:01',
-            estado: 'Favorito',
-            rating: 5
-        },
-        {
-            id: 3,
-            titulo: 'Initial D',
-            portada: 'https://wallpapers.com/images/hd/initial-d-background-s3kkjwcroepg2urt.jpg',
-            descripcion: 'Takumi Fujiwara trabaja como bombero en una estación de servicio por el dia, y entregando tofu para la tienda de su padre por las noches. Poco sabe de sus excelentes habilidades al volante, y con el Toyota Sprinter AE86 Trueno es el mejor conductor amateur en la carretera del monte Akina. A causa de esto, grupos de carrera de toda la prefectura de Gunma buscan desafiar a a Takumi para ver si realmente tiene lo necesario para ser una estrella de la calle.',
-            generos: ['Carreras', 'Drama'],
-            fechaVisto: '11/8/2025, 06:28',
-            estado: 'Favorito',
-            rating: 4.5
-        },
-        {
-            id: 4,
-            titulo: 'Owari no seraph',
-            portada: 'https://cdn.hobbyconsolas.com/sites/navi.axelspringer.es/public/media/image/2015/04/463084-anime-owari-no-seraph-castellano.jpg?tf=3840x',
-            descripcion: 'La historia tiene lugar en un mundo donde un virus ha asolado a toda la humanidad a excepción de los niños, que fueron esclavizados por vampiros. El protagonista es Yuichiro Hyakuya, un esclavo humano que sueña con hacerse lo suficientemente fuerte como para matar a todos los vampiros.',
-            generos: ['Sobrenatural', 'Drama'],
-            fechaVisto: '11/8/2025, 04:28',
-            estado: 'Favorito',
-            rating: 4.5
-        },
-        {
-            id: 5,
-            titulo: 'Dragon Ball Super',
-            portada: 'https://i.blogs.es/9d4077/dragon-ball-super/650_1200.jpeg',
-            descripcion: 'La serie se desarrollara en la tierra, tiempo después de la lucha terrible contra Majin Buu. Por órdenes de Milk, Goku trabaja fuertemente todos los días en la agricultura. Sin embargo también tiene algunos momentos para entrenar. Por otra parte, Mr Satan, luego de haber salvado al planeta por segunda vez recibe el ¡¿Premio Mundial de la Paz?!',
-            generos: ['Aventura', 'Accion', 'Comedia'],
-            fechaVisto: '11/8/2025, 04:28',
-            estado: 'Visto',
-            rating: 4
-        },
-    ]);
-
+const DirectorioAnimes: React.FC<DirectorioAnimesProps> = ({ user, onLogout }) => {
+    const [animes, setAnimes] = useState<Anime[]>([]);
+    const [loading, setLoading] = useState(true);
     const [mostrarFormulario, setMostrarFormulario] = useState(false);
-    const [nuevoAnime, setNuevoAnime] = useState<Omit<Anime, 'id'>>({
+    const [nuevoAnime, setNuevoAnime] = useState({
         titulo: '',
         portada: '',
         descripcion: '',
-        generos: [],
-        fechaVisto: new Date().toLocaleString(),
-        estado: 'Visto',
+        generos: [] as string[],
+        fecha_visto: new Date().toLocaleString(),
+        estado: 'Visto' as EstadoAnime,
         rating: 0
     });
 
-    const agregarAnime = () => {
-        const anime: Anime = {
-            ...nuevoAnime,
-            id: Date.now()
-        };
-        setAnimes([...animes, anime]);
-        setNuevoAnime({
-            titulo: '',
-            portada: '',
-            descripcion: '',
-            generos: [],
-            fechaVisto: new Date().toLocaleString(),
-            estado: 'Visto',
-            rating: 0
-        });
-        setMostrarFormulario(false);
+    console.log('🔍 DirectorioAnimes renderizado - user:', user?.id, 'loading:', loading);
+
+    // Cargar animes del usuario desde Supabase
+    const cargarAnimes = useCallback(async () => {
+        try {
+            console.log('🔄 Intentando cargar animes...');
+            setLoading(true);
+
+            if (!user?.id) {
+                console.log('❌ No hay user.id, no se pueden cargar animes');
+                setAnimes([]);
+                return;
+            }
+
+            console.log('🔍 Cargando animes para usuario:', user.id);
+
+            const { data, error } = await supabase
+                .from('animes')
+                .select('*')
+                .eq('user_id', user.id)
+                .order('created_at', { ascending: false });
+
+            if (error) {
+                console.error('❌ Error de Supabase:', error);
+                throw error;
+            }
+
+            console.log('✅ Animes cargados:', data?.length || 0);
+            setAnimes(data || []);
+        } catch (error) {
+            console.error('❌ Error cargando animes:', error);
+            setAnimes([]);
+        } finally {
+            console.log('✅ Carga de animes completada');
+            setLoading(false);
+        }
+    }, [user]);
+
+    useEffect(() => {
+        console.log('🔍 useEffect DirectorioAnimes - user:', user?.id);
+        if (user && user.id) {
+            console.log('✅ Usuario válido, cargando animes');
+            cargarAnimes();
+        } else {
+            console.log('❌ No hay usuario válido, deteniendo carga');
+            setLoading(false);
+            setAnimes([]);
+        }
+    }, [user, cargarAnimes]);
+
+    const agregarAnime = async () => {
+        try {
+            if (!user?.id) {
+                console.error('❌ No hay usuario al agregar anime');
+                return;
+            }
+
+            console.log('➕ Agregando anime para usuario:', user.id);
+
+            const { data, error } = await supabase
+                .from('animes')
+                .insert([
+                    {
+                        ...nuevoAnime,
+                        user_id: user.id,
+                        generos: nuevoAnime.generos
+                    }
+                ])
+                .select();
+
+            if (error) {
+                console.error('❌ Error de Supabase al insertar:', error);
+                throw error;
+            }
+
+            if (data && data[0]) {
+                console.log('✅ Anime agregado exitosamente');
+                setAnimes([data[0], ...animes]);
+                setNuevoAnime({
+                    titulo: '',
+                    portada: '',
+                    descripcion: '',
+                    generos: [],
+                    fecha_visto: new Date().toLocaleString(),
+                    estado: 'Visto',
+                    rating: 0
+                });
+                setMostrarFormulario(false);
+            }
+        } catch (error) {
+            console.error('❌ Error agregando anime:', error);
+            alert('Error al agregar el anime. Por favor verifica la consola para más detalles.');
+        }
     };
 
     const handleLogout = () => {
         if (onLogout) {
+            console.log('🚪 Cerrando sesión');
             onLogout();
         }
     };
 
+    if (loading) {
+        console.log('⏳ DirectorioAnimes: Mostrando loading...');
+        return (
+            <div className="directorio-completo">
+                <div className="loading-container">
+                    <div className="loading-spinner"></div>
+                    <p>Cargando tu biblioteca...</p>
+                </div>
+            </div>
+        );
+    }
+
+    // Si no hay usuario, mostrar mensaje
+    if (!user) {
+        console.log('❌ DirectorioAnimes: No hay usuario');
+        return (
+            <div className="directorio-completo">
+                <div className="no-user-message">
+                    <p>Por favor inicia sesión para acceder a tu biblioteca.</p>
+                </div>
+            </div>
+        );
+    }
+
+    console.log('✅ DirectorioAnimes: Mostrando contenido para usuario:', user.id);
     return (
         <div className="directorio-completo">
-            {/* Fondo integrado */}
             <div className="directorio-fondo"></div>
-
-            {/* Contenido del directorio */}
             <div className="directorio-contenido">
                 <header className="directorio-header">
                     <div className="header-top">
-                        <h1>Mi biblioteca de animes</h1>
-                        <div className="header-buttons">
+                        {/* Izquierda: Texto "Biblioteca" */}
+                        <div className="header-left">
+                            <h1 className="header-title">Biblioteca</h1>
+                        </div>
+
+                        {/* Centro: Logo */}
+                        <div className="header-center">
+                            <img
+                                src="/logooo.png"
+                                alt="Logo"
+                                className="header-logo"
+                            />
+                        </div>
+
+                        {/* Derecha: Botones */}
+                        <div className="header-right">
                             <button onClick={() => setMostrarFormulario(true)} className="btn-primary">
                                 + Agregar Anime
                             </button>
@@ -178,7 +250,10 @@ const DirectorioAnimes: React.FC<DirectorioAnimesProps> = ({ onLogout }) => {
                                 <label>Estado:</label>
                                 <select
                                     value={nuevoAnime.estado}
-                                    onChange={(e) => setNuevoAnime({ ...nuevoAnime, estado: e.target.value as Anime['estado'] })}
+                                    onChange={(e) => setNuevoAnime({
+                                        ...nuevoAnime,
+                                        estado: e.target.value as EstadoAnime
+                                    })}
                                 >
                                     <option value="Visto">Visto</option>
                                     <option value="Viéndolo">Viéndolo</option>
@@ -214,32 +289,44 @@ const DirectorioAnimes: React.FC<DirectorioAnimesProps> = ({ onLogout }) => {
 
                 {/* Lista de animes */}
                 <div className="animes-grid">
-                    {animes.map((anime) => (
-                        <div key={anime.id} className="anime-card">
-                            <div className="anime-portada">
-                                <img src={anime.portada} alt={anime.titulo} />
-                                <div className="anime-estado">{anime.estado}</div>
-                                {anime.rating > 0 && (
-                                    <div className="anime-rating">⭐ {anime.rating}</div>
-                                )}
-                            </div>
-
-                            <div className="anime-info">
-                                <h3>{anime.titulo}</h3>
-                                <p className="anime-descripcion">{anime.descripcion}</p>
-
-                                <div className="anime-generos">
-                                    {anime.generos.map((genero, index) => (
-                                        <span key={index} className="genero-tag">{genero}</span>
-                                    ))}
-                                </div>
-
-                                <div className="anime-fecha">
-                                    <strong>{anime.estado}:</strong> {anime.fechaVisto}
-                                </div>
-                            </div>
+                    {animes.length === 0 ? (
+                        <div className="no-animes">
+                            <p>No tienes animes guardados todavía.</p>
+                            <button onClick={() => setMostrarFormulario(true)} className="btn-primary">
+                                Agregar tu primer anime
+                            </button>
                         </div>
-                    ))}
+                    ) : (
+                        animes.map((anime) => (
+                            <div
+                                key={anime.id}
+                                className="anime-card"
+                            >
+                                <div className="anime-portada">
+                                    <img src={anime.portada} alt={anime.titulo} />
+                                    <div className="anime-estado">{anime.estado}</div>
+                                    {anime.rating > 0 && (
+                                        <div className="anime-rating">⭐ {anime.rating}</div>
+                                    )}
+                                </div>
+
+                                <div className="anime-info">
+                                    <h3>{anime.titulo}</h3>
+
+                                    <p className="anime-descripcion">{anime.descripcion.substring(0, 100)}...</p>
+
+                                    <div className="anime-generos">
+                                        {anime.generos.slice(0, 3).map((genero, index) => (
+                                            <span key={index} className="genero-tag">{genero}</span>
+                                        ))}
+                                        {anime.generos.length > 3 && (
+                                            <span className="genero-tag">+{anime.generos.length - 3}</span>
+                                        )}
+                                    </div>
+                                </div>
+                            </div>
+                        ))
+                    )}
                 </div>
             </div>
         </div>

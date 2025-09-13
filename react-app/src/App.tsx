@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import Login from './components/Login';
 import DirectorioAnimes from './components/DirectorioAnimes';
 import supabase from './lib/supabase';
-import { User, Session } from './types/supabase';
+import { User } from './types/supabase';
 import './App.css';
 
 function App() {
@@ -10,97 +10,137 @@ function App() {
   const [error, setError] = useState<string>('');
   const [loading, setLoading] = useState<boolean>(true);
 
-  // Verificar sesión activa al cargar
   useEffect(() => {
-    const getSession = async (): Promise<void> => {
+    console.log('🔍 App useEffect ejecutado');
+
+    // Obtener sesión inicial
+    const initializeAuth = async () => {
       try {
-        const { data, error: sessionError } = await supabase.auth.getSession();
+        console.log('🔄 Inicializando autenticación...');
+        const { data: { session }, error: sessionError } = await supabase.auth.getSession();
 
         if (sessionError) {
-          throw sessionError;
+          console.error('❌ Error obteniendo sesión:', sessionError);
+          setError('Error al cargar la sesión');
+          setLoading(false);
+          return;
         }
 
-        if (data.session?.user) {
-          setUser(data.session.user);
+        if (session?.user) {
+          console.log('✅ Usuario autenticado:', session.user.id);
+          setUser(session.user);
+        } else {
+          console.log('ℹ️ No hay usuario autenticado');
         }
-      } catch (error: unknown) {
-        console.error('Error obteniendo sesión:', error);
-        const errorMessage = error instanceof Error ? error.message : 'Error al obtener sesión';
-        setError(errorMessage);
+      } catch (error) {
+        console.error('❌ Error inicializando auth:', error);
+        setError('Error al inicializar');
       } finally {
+        console.log('✅ Loading terminado');
         setLoading(false);
       }
     };
 
-    getSession();
+    initializeAuth();
 
-    // Escuchar cambios de autenticación
+    // Suscripción a cambios de autenticación
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      (event: string, session: Session | null) => {
+      async (event, session) => {
+        console.log('🔄 Auth state changed:', event);
+
         if (event === 'SIGNED_IN' && session?.user) {
+          console.log('✅ Usuario inició sesión:', session.user.id);
           setUser(session.user);
           setError('');
         } else if (event === 'SIGNED_OUT') {
+          console.log('✅ Usuario cerró sesión');
           setUser(null);
+          setError('');
         }
       }
     );
 
+    // Timeout de seguridad
+    const safetyTimeout = setTimeout(() => {
+      console.log('⏰ Timeout de seguridad: Forzando fin de loading');
+      setLoading(false);
+    }, 5000); // 5 segundos
+
     return () => {
+      console.log('🧹 Limpiando useEffect');
       subscription.unsubscribe();
+      clearTimeout(safetyTimeout);
     };
   }, []);
 
-  const handleLogin = (userData: User): void => {
+  const handleLogin = (userData: User) => {
     setUser(userData);
     setError('');
   };
 
-  const handleError = (errorMessage: string): void => {
+  const handleError = (errorMessage: string) => {
     setError(errorMessage);
   };
 
-  const handleLogout = async (): Promise<void> => {
+  const handleLogout = async () => {
     try {
-      const { error } = await supabase.auth.signOut();
-      if (error) {
-        throw error;
-      }
+      console.log('🚪 Cerrando sesión...');
+      await supabase.auth.signOut();
       setUser(null);
-    } catch (error: unknown) {
+      setError('');
+    } catch (error) {
       console.error('Error al cerrar sesión:', error);
-      const errorMessage = error instanceof Error ? error.message : 'Error al cerrar sesión';
-      setError(errorMessage);
+      setError('Error al cerrar sesión');
     }
   };
 
+  console.log('🔄 App renderizado - loading:', loading, 'user:', user?.id);
+
   if (loading) {
+    console.log('⏳ Mostrando pantalla de carga...');
     return (
-      <div className="App">
-        <div className="loading-container">
-          <div className="loading-spinner"></div>
-          <p>Cargando...</p>
-        </div>
+      <div className="loading-container">
+        <div className="loading-spinner"></div>
+        <p>Cargando...</p>
+        <button
+          onClick={() => {
+            console.log('🔄 Reiniciando manualmente...');
+            window.location.href = '/'; // Redirección completa
+          }}
+          style={{
+            marginTop: '20px',
+            padding: '10px 20px',
+            background: 'rgba(102, 126, 234, 0.8)',
+            color: 'white',
+            border: 'none',
+            borderRadius: '8px',
+            cursor: 'pointer'
+          }}
+        >
+          Reintentar
+        </button>
       </div>
     );
   }
 
   if (!user) {
+    console.log('👤 No hay usuario, mostrando Login');
     return (
       <div className="App">
         <Login onLogin={handleLogin} onError={handleError} />
-        {error && (
-          <div className="error-toast">
-            {error}
-          </div>
-        )}
+        {error && <div className="error-toast">{error}</div>}
       </div>
     );
   }
 
+  console.log('🎬 Mostrando DirectorioAnimes para usuario:', user.id);
   return (
     <div className="App">
-      <DirectorioAnimes onLogout={handleLogout} />
+      <DirectorioAnimes
+        user={user}
+        onLogout={handleLogout}
+      />
+      {error && <div className="error-toast">{error}</div>}
     </div>
   );
 }

@@ -21,7 +21,6 @@
 }
 
 .directorio-header {
-    text-align: center;
     margin-bottom: 30px;
 }
 
@@ -29,25 +28,31 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 20px;
     flex-wrap: wrap;
-    gap: 15px;
+    gap: 20px;
+    padding: 20px;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 16px;
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
-.header-buttons {
-    display: flex;
-    gap: 15px;
-    align-items: center;
-}
-
-.directorio-header h1 {
-    font-size: 3rem;
-    margin-bottom: 0;
+.header-title {
+    font-size: 2.8rem;
+    font-weight: bold;
     background: linear-gradient(90deg, #ff00cc, #3333ff, #00ffcc);
     -webkit-background-clip: text;
     background-clip: text;
     color: transparent;
     animation: gradientMove 8s ease infinite;
+    font-family: 'Cascadia Code', monospace;
+}
+
+.header-logo {
+    height: 100px;
+    width: auto;
+    max-width: 100px;
+    object-fit: contain;
 }
 
 .btn-primary {
@@ -60,6 +65,8 @@
     font-size: 1rem;
     font-weight: 600;
     transition: all 0.3s ease;
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
 }
 
 .btn-primary:hover {
@@ -85,92 +92,84 @@
     transform: translateY(-2px);
 }
 
-/* Formulario */
-.formulario-overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: rgba(0, 0, 0, 0.8);
+@media (max-width: 768px) {
+    .header-top {
+        flex-direction: column;
+        text-align: center;
+        gap: 15px;
+    }
+
+    .header-left,
+    .header-center,
+    .header-right {
+        justify-content: center;
+        min-width: auto;
+        width: 100%;
+    }
+
+    .header-title {
+        font-size: 1.8rem;
+    }
+
+    .header-logo {
+        height: 50px;
+    }
+
+    .header-right {
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .btn-primary,
+    .logout-btn {
+        width: 100%;
+        max-width: 250px;
+    }
+}
+
+.loading-container {
     display: flex;
+    flex-direction: column;
     justify-content: center;
     align-items: center;
-    z-index: 1000;
-}
-
-.formulario-anime {
-    background: rgba(255, 255, 255, 0.1);
-    backdrop-filter: blur(20px);
-    padding: 30px;
-    border-radius: 16px;
-    border: 1px solid rgba(255, 255, 255, 0.2);
-    width: 90%;
-    max-width: 500px;
-    max-height: 90vh;
-    overflow-y: auto;
-}
-
-.formulario-anime h2 {
-    margin-bottom: 20px;
-    text-align: center;
-}
-
-.form-group {
-    margin-bottom: 15px;
-}
-
-.form-group label {
-    display: block;
-    margin-bottom: 5px;
-    font-weight: 600;
-}
-
-.form-group input,
-.form-group textarea,
-.form-group select {
-    width: 100%;
-    padding: 10px;
-    border: 1px solid rgba(255, 255, 255, 0.3);
-    border-radius: 8px;
-    background: rgba(255, 255, 255, 0.1);
+    height: 50vh;
     color: white;
-    font-size: 1rem;
 }
 
-.form-group input:focus,
-.form-group textarea:focus,
-.form-group select:focus {
-    outline: none;
-    border-color: #667eea;
-    background: rgba(255, 255, 255, 0.15);
+.loading-spinner {
+    width: 40px;
+    height: 40px;
+    border: 4px solid rgba(255, 255, 255, 0.3);
+    border-top: 4px solid #87CEFA;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    margin-bottom: 1rem;
 }
 
-.form-buttons {
-    display: flex;
-    justify-content: center;
-    gap: 10px;
-    margin-top: 20px;
+@keyframes spin {
+    0% {
+        transform: rotate(0deg);
+    }
+
+    100% {
+        transform: rotate(360deg);
+    }
 }
 
-.btn-secondary {
-    background: rgba(255, 255, 255, 0.1);
-    color: white;
-    padding: 12px 24px;
-    border: 1px solid rgba(255, 255, 255, 0.2);
-    border-radius: 8px;
-    cursor: pointer;
-    font-size: 1rem;
-    font-weight: 600;
-    transition: all 0.3s ease;
-    margin-left: 10px;
+@keyframes gradientMove {
+    0% {
+        background-position: 0% 50%;
+    }
+
+    50% {
+        background-position: 100% 50%;
+    }
+
+    100% {
+        background-position: 0% 50%;
+    }
 }
 
-.btn-secondary:hover {
-    background: rgba(255, 255, 255, 0.2);
-}
-
-/* Grid de animes */
 .animes-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
@@ -230,9 +229,12 @@
     padding: 15px;
 }
 
-.anime-info h3 {
+.anime-info h3.anime-titulo {
     margin: 0 0 10px 0;
-    font-size: 1.2rem;
+    font-size: 1.4rem;
+    font-weight: 800;
+    color: #fff;
+    text-shadow: 0 2px 6px rgba(0, 0, 0, 0.6);
 }
 
 .anime-descripcion {
@@ -244,7 +246,6 @@
     line-clamp: 3;
     -webkit-line-clamp: 3;
     -webkit-box-orient: vertical;
-    box-orient: vertical;
 }
 
 .anime-generos {
@@ -262,48 +263,128 @@
     font-size: 0.8rem;
 }
 
-.anime-fecha {
+.anime-actions {
+    margin-top: 15px;
+    padding-top: 15px;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    display: flex;
+    gap: 8px;
+    justify-content: center;
+    align-items: center;
+}
+
+.ver-mas-btn,
+.editar-btn,
+.eliminar-btn {
+    padding: 6px 12px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
     font-size: 0.8rem;
-    opacity: 0.7;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 50px;
+    height: 32px;
 }
 
-@keyframes gradientMove {
-    0% {
-        background-position: 0% 50%;
-    }
-
-    50% {
-        background-position: 100% 50%;
-    }
-
-    100% {
-        background-position: 0% 50%;
-    }
+.ver-mas-btn {
+    background: rgba(102, 126, 234, 0.8);
+    color: white;
 }
 
-/* Responsive */
-@media (max-width: 768px) {
-    .header-top {
-        flex-direction: column;
-        text-align: center;
-    }
-
-    .header-buttons {
-        flex-direction: column;
-        width: 100%;
-    }
-
-    .directorio-header h1 {
-        font-size: 2.5rem;
-    }
-
-    .btn-primary,
-    .logout-btn {
-        width: 100%;
-    }
+.ver-mas-btn:hover {
+    background: rgba(102, 126, 234, 1);
+    transform: translateY(-2px);
 }
 
-/* Formulario */
+.editar-btn {
+    background: rgba(255, 193, 7, 0.8);
+    color: #333;
+}
+
+.editar-btn:hover {
+    background: rgba(255, 193, 7, 1);
+    transform: translateY(-2px);
+}
+
+.eliminar-btn {
+    background: rgba(239, 68, 68, 0.8);
+    color: white;
+}
+
+.eliminar-btn:hover:not(:disabled) {
+    background: rgba(239, 68, 68, 1);
+    transform: translateY(-2px);
+}
+
+.eliminar-btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+.anime-card.expandido {
+    grid-column: 1 / -1;
+    max-width: 800px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: row;
+    height: auto;
+}
+
+.anime-card.expandido .anime-portada {
+    flex: 0 0 300px;
+    height: 400px;
+}
+
+.anime-card.expandido .anime-info {
+    flex: 1;
+    padding: 25px;
+}
+
+.anime-descripcion-completa {
+    margin: 15px 0;
+}
+
+.anime-descripcion-completa h4 {
+    color: #87CEFA;
+    margin-bottom: 8px;
+    font-size: 1.1rem;
+}
+
+.anime-descripcion-completa p {
+    line-height: 1.6;
+    font-size: 1rem;
+}
+
+.anime-detalles-expandidos {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 15px;
+    margin: 20px 0;
+    padding: 15px;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 10px;
+}
+
+.detalle-item {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.detalle-item strong {
+    color: #87CEFA;
+    font-size: 0.9rem;
+}
+
+.generos-lista {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 5px;
+}
+
 .formulario-overlay {
     position: fixed;
     top: 0;
@@ -333,8 +414,7 @@
 .formulario-anime h2 {
     margin-bottom: 20px;
     text-align: center;
-    color: white;
-    font-size: 1.8rem;
+    color: #87CEFA;
 }
 
 .form-group {
@@ -362,11 +442,6 @@
     transition: all 0.3s ease;
 }
 
-.form-group input::placeholder,
-.form-group textarea::placeholder {
-    color: rgba(255, 255, 255, 0.6);
-}
-
 .form-group input:focus,
 .form-group textarea:focus,
 .form-group select:focus {
@@ -376,31 +451,6 @@
     box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.2);
 }
 
-/* Estilo específico para el select */
-.form-group select {
-    appearance: none;
-    background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
-    background-repeat: no-repeat;
-    background-position: right 15px center;
-    background-size: 16px;
-    padding-right: 45px;
-}
-
-/* Opciones del select */
-.form-group select option {
-    background: #1a1a3a;
-    color: white;
-    padding: 10px;
-}
-
-/* Textarea */
-.form-group textarea {
-    resize: vertical;
-    min-height: 80px;
-    font-family: inherit;
-}
-
-/* Botones del formulario */
 .form-buttons {
     display: flex;
     justify-content: center;
@@ -408,38 +458,94 @@
     margin-top: 25px;
 }
 
-.btn-primary {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+.no-animes {
+    text-align: center;
+    grid-column: 1 / -1;
+    padding: 40px;
+    color: rgba(255, 255, 255, 0.7);
+}
+
+@media (max-width: 480px) {
+    .anime-card.expandido {
+        flex-direction: column;
+    }
+
+    .anime-card.expandido .anime-portada {
+        flex: 0 0 250px;
+        width: 100%;
+    }
+
+    .anime-detalles-expandidos {
+        grid-template-columns: 1fr;
+    }
+
+    .ver-mas-btn span,
+    .editar-btn span,
+    .eliminar-btn span {
+        display: none;
+    }
+
+    .ver-mas-btn::before {
+        content: '▼';
+    }
+
+    .ver-mas-btn[data-expanded="true"]::before {
+        content: '▲';
+    }
+
+    .editar-btn::before {
+        content: '✏️';
+    }
+
+    .eliminar-btn::before {
+        content: '🗑️';
+    }
+}
+
+.anime-card.expandido .anime-actions {
+    justify-content: flex-start;
+    gap: 10px;
+}
+
+.ver-mas-btn:hover::after,
+.editar-btn:hover::after,
+.eliminar-btn:hover::after {
+    content: attr(title);
+    position: absolute;
+    bottom: -30px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(0, 0, 0, 0.8);
+    color: rgb(253, 252, 252);
+    padding: 5px 10px;
+    border-radius: 4px;
+    font-size: 0.7rem;
+    white-space: nowrap;
+    z-index: 1000;
+}
+
+.ver-mas-btn,
+.editar-btn,
+.eliminar-btn {
+    position: relative;
+}
+
+.ver-mas-btn {
+    font-size: 0.80rem;
+}
+
+.ver-mas-btn:active,
+.editar-btn:active,
+.eliminar-btn:active {
+    transform: translateY(0);
+}
+
+.no-user-message {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 50vh;
+    text-align: center;
     color: white;
-    padding: 12px 30px;
-    border: none;
-    border-radius: 8px;
-    cursor: pointer;
-    font-size: 1rem;
-    font-weight: 600;
-    transition: all 0.3s ease;
-    min-width: 120px;
-}
-
-.btn-primary:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
-}
-
-.btn-secondary {
-    background: rgba(255, 255, 255, 0.15);
-    color: white;
-    padding: 12px 30px;
-    border: 1px solid rgba(255, 255, 255, 0.3);
-    border-radius: 8px;
-    cursor: pointer;
-    font-size: 1rem;
-    font-weight: 600;
-    transition: all 0.3s ease;
-    min-width: 120px;
-}
-
-.btn-secondary:hover {
-    background: rgba(255, 255, 255, 0.25);
-    transform: translateY(-2px);
+    font-size: 1.2rem;
 }

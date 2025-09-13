@@ -157,3 +157,20 @@
     opacity: 0.6;
     cursor: not-allowed;
 }
+
+.help-text {
+    font-size: 0.8rem;
+    color: rgba(255, 255, 255, 0.7);
+    margin-top: 0.3rem;
+    display: block;
+}
+
+.input-group {
+    margin-bottom: 1.2rem;
+}
+
+/* Asegurar que los inputs se vean bien */
+.input-field {
+    width: 100%;
+    box-sizing: border-box;
+}
