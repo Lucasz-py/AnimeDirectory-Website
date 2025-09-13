@@ -28,6 +28,7 @@ const DirectorioAnimes: React.FC<DirectorioAnimesProps> = ({ user, onLogout }) =
     const [animes, setAnimes] = useState<Anime[]>([]);
     const [loading, setLoading] = useState(true);
     const [mostrarFormulario, setMostrarFormulario] = useState(false);
+    const [editandoAnime, setEditandoAnime] = useState<Anime | null>(null);
     const [nuevoAnime, setNuevoAnime] = useState({
         titulo: '',
         portada: '',
@@ -131,6 +132,107 @@ const DirectorioAnimes: React.FC<DirectorioAnimesProps> = ({ user, onLogout }) =
         }
     };
 
+    const actualizarAnime = async () => {
+        try {
+            if (!editandoAnime?.id) {
+                console.error('❌ No hay anime para editar');
+                return;
+            }
+
+            console.log('✏️ Actualizando anime:', editandoAnime.id);
+
+            const { data, error } = await supabase
+                .from('animes')
+                .update({
+                    titulo: nuevoAnime.titulo,
+                    portada: nuevoAnime.portada,
+                    descripcion: nuevoAnime.descripcion,
+                    generos: nuevoAnime.generos,
+                    estado: nuevoAnime.estado,
+                    rating: nuevoAnime.rating
+                })
+                .eq('id', editandoAnime.id)
+                .select();
+
+            if (error) {
+                console.error('❌ Error de Supabase al actualizar:', error);
+                throw error;
+            }
+
+            if (data && data[0]) {
+                console.log('✅ Anime actualizado exitosamente');
+                setAnimes(animes.map(anime =>
+                    anime.id === editandoAnime.id ? data[0] : anime
+                ));
+                setEditandoAnime(null);
+                setNuevoAnime({
+                    titulo: '',
+                    portada: '',
+                    descripcion: '',
+                    generos: [],
+                    estado: 'Visto',
+                    rating: 0
+                });
+                setMostrarFormulario(false);
+            }
+        } catch (error) {
+            console.error('❌ Error actualizando anime:', error);
+            alert('Error al actualizar el anime. Por favor verifica la consola para más detalles.');
+        }
+    };
+
+    const eliminarAnime = async (id: number) => {
+        try {
+            if (!confirm('¿Estás seguro de que quieres eliminar este anime?')) {
+                return;
+            }
+
+            console.log('🗑️ Eliminando anime:', id);
+
+            const { error } = await supabase
+                .from('animes')
+                .delete()
+                .eq('id', id);
+
+            if (error) {
+                console.error('❌ Error de Supabase al eliminar:', error);
+                throw error;
+            }
+
+            console.log('✅ Anime eliminado exitosamente');
+            setAnimes(animes.filter(anime => anime.id !== id));
+        } catch (error) {
+            console.error('❌ Error eliminando anime:', error);
+            alert('Error al eliminar el anime. Por favor verifica la consola para más detalles.');
+        }
+    };
+
+    const iniciarEdicion = (anime: Anime) => {
+        setEditandoAnime(anime);
+        setNuevoAnime({
+            titulo: anime.titulo,
+            portada: anime.portada,
+            descripcion: anime.descripcion,
+            generos: anime.generos,
+            estado: anime.estado,
+            rating: anime.rating
+        });
+        setMostrarFormulario(true);
+    };
+
+    const cancelarEdicion = () => {
+        setEditandoAnime(null);
+        setNuevoAnime({
+            titulo: '',
+            portada: '',
+            descripcion: '',
+            generos: [],
+            estado: 'Visto',
+            rating: 0
+        });
+        setMostrarFormulario(false);
+    };
+
     const handleLogout = () => {
         if (onLogout) {
             console.log('🚪 Cerrando sesión');
@@ -197,11 +299,11 @@ const DirectorioAnimes: React.FC<DirectorioAnimesProps> = ({ user, onLogout }) =
                     </div>
                 </header>
 
-                {/* Formulario para agregar anime */}
+                {/* Formulario para agregar/editar anime */}
                 {mostrarFormulario && (
                     <div className="formulario-overlay">
                         <div className="formulario-anime">
-                            <h2>-Agregar Nuevos Animes-</h2>
+                            <h2>{editandoAnime ? '-Editar Anime-' : '-Agregar Nuevos Animes-'}</h2>
 
                             <div className="form-group">
                                 <label>Título:</label>
@@ -272,10 +374,13 @@ const DirectorioAnimes: React.FC<DirectorioAnimesProps> = ({ user, onLogout }) =
                             </div>
 
                             <div className="form-buttons">
-                                <button onClick={agregarAnime} className="btn-primary">
-                                    Agregar
+                                <button
+                                    onClick={editandoAnime ? actualizarAnime : agregarAnime}
+                                    className="btn-primary"
+                                >
+                                    {editandoAnime ? 'Actualizar' : 'Agregar'}
                                 </button>
-                                <button onClick={() => setMostrarFormulario(false)} className="btn-secondary">
+                                <button onClick={cancelarEdicion} className="btn-secondary">
                                     Cancelar
                                 </button>
                             </div>
@@ -292,36 +397,47 @@ const DirectorioAnimes: React.FC<DirectorioAnimesProps> = ({ user, onLogout }) =
                                 Agregar tu primer anime
                             </button>
                         </div>
-                    ) : (
-                        animes.map((anime) => (
-                            <div
-                                key={anime.id}
-                                className="anime-card"
-                            >
-                                <div className="anime-portada">
-                                    <img src={anime.portada} alt={anime.titulo} />
-                                    <div className="anime-estado">{anime.estado}</div>
-                                    {anime.rating > 0 && (
-                                        <div className="anime-rating">⭐ {anime.rating}</div>
+                    ) : (animes.map((anime) => (
+                        <div key={anime.id} className="anime-card">
+                            <div className="anime-portada">
+                                <img src={anime.portada} alt={anime.titulo} />
+                                <div className="anime-estado">{anime.estado}</div>
+                                {anime.rating > 0 && (
+                                    <div className="anime-rating">⭐ {anime.rating}</div>
+                                )}
+                            </div>
+
+                            <div className="anime-info">
+                                <h3>{anime.titulo}</h3>
+
+                                <p className="anime-descripcion">{anime.descripcion.substring(0, 100)}...</p>
+
+                                <div className="anime-generos">
+                                    {anime.generos.slice(0, 3).map((genero, index) => (
+                                        <span key={index} className="genero-tag">{genero}</span>
+                                    ))}
+                                    {anime.generos.length > 3 && (
+                                        <span className="genero-tag">+{anime.generos.length - 3}</span>
                                     )}
                                 </div>
 
-                                <div className="anime-info">
-                                    <h3>{anime.titulo}</h3>
-
-                                    <p className="anime-descripcion">{anime.descripcion.substring(0, 100)}...</p>
-
-                                    <div className="anime-generos">
-                                        {anime.generos.slice(0, 3).map((genero, index) => (
-                                            <span key={index} className="genero-tag">{genero}</span>
-                                        ))}
-                                        {anime.generos.length > 3 && (
-                                            <span className="genero-tag">+{anime.generos.length - 3}</span>
-                                        )}
-                                    </div>
+                                <div className="anime-actions">
+                                    <button
+                                        onClick={() => iniciarEdicion(anime)}
+                                        className="btn-editar"
+                                    >
+                                        Editar
+                                    </button>
+                                    <button
+                                        onClick={() => eliminarAnime(anime.id)}
+                                        className="btn-eliminar"
+                                    >
+                                        Eliminar
+                                    </button>
                                 </div>
                             </div>
-                        ))
+                        </div>
+                    ))
                     )}
                 </div>
             </div>
