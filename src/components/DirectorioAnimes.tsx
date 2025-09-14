@@ -279,7 +279,7 @@ const DirectorioAnimes: React.FC<DirectorioAnimesProps> = ({ user, onLogout }) =
                         {/* Centro: Logo */}
                         <div className="header-center">
                             <img
-                                src="/logooo.png"
+                                src="/logomain.png"
                                 alt="Logo"
                                 className="header-logo"
                             />
