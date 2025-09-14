@@ -5,5 +5,8 @@
     "bootstrap": "^5.3.3",
     "gsap": "^3.13.0",
     "three": "^0.180.0"
+  },
+  "devDependencies": {
+    "typescript": "^5.9.2"
   }
 }
