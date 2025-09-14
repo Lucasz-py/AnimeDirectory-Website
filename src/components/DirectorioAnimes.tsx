@@ -408,7 +408,7 @@ const DirectorioAnimes: React.FC<DirectorioAnimesProps> = ({ user, onLogout }) =
                             </div>
 
                             <div className="anime-info">
-                                <h3>{anime.titulo}</h3>
+                                <h3 className="anime-titulo">{anime.titulo}</h3>
 
                                 <p className="anime-descripcion">{anime.descripcion.substring(0, 100)}...</p>
 

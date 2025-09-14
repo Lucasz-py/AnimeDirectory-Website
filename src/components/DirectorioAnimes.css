@@ -35,6 +35,10 @@
     border-radius: 16px;
     backdrop-filter: blur(10px);
     border: 2px solid rgba(160, 47, 204, 0.295);
+    box-shadow:
+        0 0 2px rgba(173, 14, 236, 0.6),
+        0 0 6px rgba(173, 14, 236, 0.4),
+        0 0 10px rgba(173, 14, 236, 0.2);
 }
 
 .header-title {
@@ -46,6 +50,11 @@
     color: transparent;
     animation: gradientMove 8s ease infinite;
     font-family: 'Cascadia Code', monospace;
+    color: #fff;
+    text-shadow:
+        0 0 0px rgb(59, 164, 212),
+        0 0 30px rgb(127, 46, 219),
+        0 0 0px rgb(50, 24, 167);
 }
 
 .header-logo {
@@ -57,7 +66,7 @@
 
 .btn-primary {
     background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    color: white;
+    color: rgb(255, 255, 255);
     padding: 12px 24px;
     border: none;
     border-radius: 80px;
@@ -68,6 +77,11 @@
     backdrop-filter: blur(10px);
     font-family: 'Cascadia Code', monospace;
     margin-right: 12px;
+    color: #fff;
+    text-shadow:
+        0 0 0px rgb(0, 0, 0),
+        0 0 0px rgb(127, 46, 219),
+        0 0 5px rgb(0, 0, 0);
 }
 
 .btn-primary:hover {
@@ -77,7 +91,7 @@
 
 .btn-secondary {
     background: linear-gradient(135deg, #413a3a 0%, #111111 100%);
-    color: white;
+    color: rgb(255, 255, 255);
     padding: 12px 24px;
     border: none;
     border-radius: 80px;
@@ -107,6 +121,11 @@
     transition: all 0.3s ease;
     backdrop-filter: blur(10px);
     font-family: 'Cascadia Code', monospace;
+    color: #fff;
+    text-shadow:
+        0 0 0px rgb(0, 0, 0),
+        0 0 0px rgb(127, 46, 219),
+        0 0 5px rgb(0, 0, 0);
 }
 
 .logout-btn:hover {
@@ -199,14 +218,31 @@
     margin-top: 30px;
 }
 
+/*Tarjeta anime*/
 .anime-card {
     background: rgba(255, 255, 255, 0.103);
     border-radius: 12px;
     overflow: hidden;
     backdrop-filter: blur(10px);
-    border: 1.5px solid rgba(173, 14, 236, 0.212);
+    border: 2px solid rgba(173, 14, 236, 0.212);
+    box-shadow:
+        0 0 2px rgba(173, 14, 236, 0.6),
+        0 0 6px rgba(173, 14, 236, 0.4),
+        0 0 10px rgba(173, 14, 236, 0.2);
     transition: transform 0.3s ease;
 }
+
+.anime-titulo {
+    font-family: 'Ubuntu', sans-serif;
+    font-size: 1.6rem;
+    color: #ffffff;
+    margin-bottom: 0.5rem;
+    text-shadow:
+        0 0 5px #240eec,
+        0 0 0px #c715e0,
+        0 0 8px #101bc0;
+}
+
 
 .anime-card:hover {
     transform: translateY(-5px);
@@ -247,69 +283,12 @@
     font-weight: 600;
 }
 
-.anime-info {
-    padding: 15px;
-}
-
-.anime-info h3.anime-titulo {
-    margin: 0 0 10px 0;
-    font-size: 1.4rem;
-    font-weight: 800;
-    color: #fff;
-    text-shadow: 0 2px 6px rgba(0, 0, 0, 0.6);
-}
-
-.anime-descripcion {
-    font-size: 0.9rem;
-    opacity: 0.8;
-    margin-bottom: 10px;
-    display: -webkit-box;
-    overflow: hidden;
-    line-clamp: 3;
-    -webkit-line-clamp: 3;
-    -webkit-box-orient: vertical;
-}
-
-.anime-generos {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 5px;
-    margin-bottom: 10px;
-}
-
 .genero-tag {
     background: rgba(102, 126, 234, 0.3);
-    color: white;
-    padding: 3px 8px;
+    color: rgb(255, 255, 255);
+    padding: 4px 9px;
     border-radius: 12px;
-    font-size: 0.8rem;
-}
-
-.anime-actions {
-    margin-top: 15px;
-    padding-top: 15px;
-    border-top: 1px solid rgba(255, 255, 255, 0.1);
-    display: flex;
-    gap: 8px;
-    justify-content: center;
-    align-items: center;
-}
-
-.detalle-item {
-    display: flex;
-    flex-direction: column;
-    gap: 500px;
-}
-
-.detalle-item strong {
-    color: #ee2b2b;
     font-size: 0.9rem;
-}
-
-.generos-lista {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 5px;
 }
 
 .formulario-overlay {

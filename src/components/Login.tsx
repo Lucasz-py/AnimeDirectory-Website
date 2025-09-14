@@ -119,7 +119,7 @@ const Login: React.FC<LoginProps> = ({ onLogin, onError }) => {
         <div className="login-overlay">
             <div className="login-container">
                 <div className="login-card">
-                    <h1 className="login-title">Anime collection</h1>
+                    <h1 className="login-title">いらっしゃいませ</h1>
 
                     <form onSubmit={handleSubmit} className="login-form">
                         {isSignUp && (
@@ -139,7 +139,7 @@ const Login: React.FC<LoginProps> = ({ onLogin, onError }) => {
                                     pattern="[a-zA-Z0-9_]+"
                                     title="Solo letras, números y guiones bajos"
                                 />
-                                <span className="help-text">Solo letras, números y guiones bajos</span>
+                                <span className="help-text"></span>
                             </div>
                         )}
 
@@ -177,7 +177,7 @@ const Login: React.FC<LoginProps> = ({ onLogin, onError }) => {
                                 disabled={loading}
                                 minLength={6}
                             />
-                            <span className="help-text">Mínimo 6 caracteres</span>
+                            <span className="help-text"></span>
                         </div>
 
                         {isSignUp && (
