@@ -1,44 +1,74 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import supabase from '../lib/supabase';
-import { User, UserProfile } from '../types/supabase';
+import { User, UserProfile, Anime } from '../types/supabase';
+import FiltradorAnimes from './FiltradorAnimes';
 import './DirectorioAnimes.css';
 
-// Definir tipo para el estado
-type EstadoAnime = 'Visto' | 'Viéndolo' | 'Por ver' | 'Favorito';
-
-interface Anime {
-    id: number;
-    user_id: string;
-    titulo: string;
-    portada: string;
-    descripcion: string;
-    generos: string[];
-    estado: EstadoAnime;
-    rating: number;
-    created_at?: string;
-}
+// Usar el tipo EstadoAnime directamente desde la interfaz Anime
+type EstadoAnime = Anime['estado'];
 
 interface DirectorioAnimesProps {
     user: User | null;
-    userProfile?: UserProfile | null;
     onLogout?: () => void;
 }
 
 const DirectorioAnimes: React.FC<DirectorioAnimesProps> = ({ user, onLogout }) => {
     const [animes, setAnimes] = useState<Anime[]>([]);
+    const [animesFiltrados, setAnimesFiltrados] = useState<Anime[]>([]);
     const [loading, setLoading] = useState(true);
     const [mostrarFormulario, setMostrarFormulario] = useState(false);
     const [editandoAnime, setEditandoAnime] = useState<Anime | null>(null);
-    const [nuevoAnime, setNuevoAnime] = useState({
+    const [userProfile, setUserProfile] = useState<UserProfile | null>(null);
+    const [nuevoAnime, setNuevoAnime] = useState<Omit<Anime, 'id' | 'user_id' | 'created_at' | 'updated_at'> & {
+        id?: number;
+        user_id?: string;
+    }>({
         titulo: '',
         portada: '',
         descripcion: '',
-        generos: [] as string[],
-        estado: 'Visto' as EstadoAnime,
+        generos: [],
+        fecha_visto: new Date().toISOString().split('T')[0],
+        estado: 'Visto',
         rating: 0
     });
 
     console.log('🔍 DirectorioAnimes renderizado - user:', user?.id, 'loading:', loading);
+
+    // Cargar perfil del usuario
+    const cargarPerfilUsuario = useCallback(async () => {
+        if (!user?.id) {
+            setUserProfile(null);
+            return;
+        }
+
+        try {
+            console.log('🔄 Cargando perfil de usuario:', user.id);
+            const { data, error } = await supabase
+                .from('profiles')
+                .select('*')
+                .eq('id', user.id)
+                .single();
+
+            console.log('📊 Resultado query perfil:', { data, error });
+
+            if (error) {
+                console.error('❌ Error cargando perfil:', error);
+                setUserProfile(null);
+                return;
+            }
+
+            if (data) {
+                console.log('✅ Perfil cargado:', data.username);
+                setUserProfile(data);
+            } else {
+                console.log('ℹ️ No se encontró perfil para el usuario');
+                setUserProfile(null);
+            }
+        } catch (error) {
+            console.error('❌ Error cargando perfil:', error);
+            setUserProfile(null);
+        }
+    }, [user]);
 
     // Cargar animes del usuario desde Supabase
     const cargarAnimes = useCallback(async () => {
@@ -49,6 +79,7 @@ const DirectorioAnimes: React.FC<DirectorioAnimesProps> = ({ user, onLogout }) =
             if (!user?.id) {
                 console.log('❌ No hay user.id, no se pueden cargar animes');
                 setAnimes([]);
+                setAnimesFiltrados([]);
                 return;
             }
 
@@ -67,9 +98,11 @@ const DirectorioAnimes: React.FC<DirectorioAnimesProps> = ({ user, onLogout }) =
 
             console.log('✅ Animes cargados:', data?.length || 0);
             setAnimes(data || []);
+            setAnimesFiltrados(data || []);
         } catch (error) {
             console.error('❌ Error cargando animes:', error);
             setAnimes([]);
+            setAnimesFiltrados([]);
         } finally {
             console.log('✅ Carga de animes completada');
             setLoading(false);
@@ -79,14 +112,22 @@ const DirectorioAnimes: React.FC<DirectorioAnimesProps> = ({ user, onLogout }) =
     useEffect(() => {
         console.log('🔍 useEffect DirectorioAnimes - user:', user?.id);
         if (user && user.id) {
-            console.log('✅ Usuario válido, cargando animes');
+            console.log('✅ Usuario válido, cargando datos');
             cargarAnimes();
+            cargarPerfilUsuario();
         } else {
             console.log('❌ No hay usuario válido, deteniendo carga');
             setLoading(false);
             setAnimes([]);
+            setAnimesFiltrados([]);
+            setUserProfile(null);
         }
-    }, [user, cargarAnimes]);
+    }, [user, cargarAnimes, cargarPerfilUsuario]);
+
+    // Efecto para inicializar animesFiltrados cuando se cargan los animes
+    useEffect(() => {
+        setAnimesFiltrados(animes);
+    }, [animes]);
 
     const agregarAnime = async () => {
         try {
@@ -103,7 +144,8 @@ const DirectorioAnimes: React.FC<DirectorioAnimesProps> = ({ user, onLogout }) =
                     {
                         ...nuevoAnime,
                         user_id: user.id,
-                        generos: nuevoAnime.generos
+                        generos: nuevoAnime.generos,
+                        fecha_visto: nuevoAnime.fecha_visto || new Date().toISOString().split('T')[0]
                     }
                 ])
                 .select();
@@ -121,6 +163,7 @@ const DirectorioAnimes: React.FC<DirectorioAnimesProps> = ({ user, onLogout }) =
                     portada: '',
                     descripcion: '',
                     generos: [],
+                    fecha_visto: new Date().toISOString().split('T')[0],
                     estado: 'Visto',
                     rating: 0
                 });
@@ -148,6 +191,7 @@ const DirectorioAnimes: React.FC<DirectorioAnimesProps> = ({ user, onLogout }) =
                     portada: nuevoAnime.portada,
                     descripcion: nuevoAnime.descripcion,
                     generos: nuevoAnime.generos,
+                    fecha_visto: nuevoAnime.fecha_visto,
                     estado: nuevoAnime.estado,
                     rating: nuevoAnime.rating
                 })
@@ -170,6 +214,7 @@ const DirectorioAnimes: React.FC<DirectorioAnimesProps> = ({ user, onLogout }) =
                     portada: '',
                     descripcion: '',
                     generos: [],
+                    fecha_visto: new Date().toISOString().split('T')[0],
                     estado: 'Visto',
                     rating: 0
                 });
@@ -214,6 +259,7 @@ const DirectorioAnimes: React.FC<DirectorioAnimesProps> = ({ user, onLogout }) =
             portada: anime.portada,
             descripcion: anime.descripcion,
             generos: anime.generos,
+            fecha_visto: anime.fecha_visto,
             estado: anime.estado,
             rating: anime.rating
         });
@@ -227,6 +273,7 @@ const DirectorioAnimes: React.FC<DirectorioAnimesProps> = ({ user, onLogout }) =
             portada: '',
             descripcion: '',
             generos: [],
+            fecha_visto: new Date().toISOString().split('T')[0],
             estado: 'Visto',
             rating: 0
         });
@@ -299,6 +346,14 @@ const DirectorioAnimes: React.FC<DirectorioAnimesProps> = ({ user, onLogout }) =
                     </div>
                 </header>
 
+                {/* Componente Filtrador */}
+                <FiltradorAnimes
+                    animes={animes}
+                    user={user}
+                    userProfile={userProfile}
+                    onFiltroChange={setAnimesFiltrados}
+                />
+
                 {/* Formulario para agregar/editar anime */}
                 {mostrarFormulario && (
                     <div className="formulario-overlay">
@@ -358,6 +413,7 @@ const DirectorioAnimes: React.FC<DirectorioAnimesProps> = ({ user, onLogout }) =
                                     <option value="Viéndolo">Viéndolo</option>
                                     <option value="Por ver">Por ver</option>
                                     <option value="Favorito">Favorito</option>
+                                    <option value="Dropped">Dropped</option>
                                 </select>
                             </div>
 
@@ -390,14 +446,14 @@ const DirectorioAnimes: React.FC<DirectorioAnimesProps> = ({ user, onLogout }) =
 
                 {/* Lista de animes */}
                 <div className="animes-grid">
-                    {animes.length === 0 ? (
+                    {animesFiltrados.length === 0 ? (
                         <div className="no-animes">
                             <p>No tienes animes guardados todavía.</p>
                             <button onClick={() => setMostrarFormulario(true)} className="btn-primary">
                                 Agregar tu primer anime
                             </button>
                         </div>
-                    ) : (animes.map((anime) => (
+                    ) : (animesFiltrados.map((anime) => (
                         <div key={anime.id} className="anime-card">
                             <div className="anime-portada">
                                 <img src={anime.portada} alt={anime.titulo} />

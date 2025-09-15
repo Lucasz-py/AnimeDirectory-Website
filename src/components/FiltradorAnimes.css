@@ -1,0 +1,211 @@
+.filtrador-container {
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 12px;
+    padding: 15px;
+    margin-bottom: 20px;
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(173, 14, 236, 0.2);
+    box-shadow: 0 0 10px rgba(173, 14, 236, 0.1);
+    transition: all 0.3s ease;
+}
+
+.filtrador-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 5px;
+    gap: 20px;
+}
+
+.welcome-message {
+    flex: 1;
+}
+
+.welcome-text {
+    color: #87CEFA;
+    font-family: 'Cascadia Code', monospace;
+    font-size: 2rem;
+    font-weight: 600;
+    text-shadow:
+        0 0 10px rgba(135, 206, 250, 0.7),
+        0 0 10px rgba(135, 206, 250, 0.4);
+}
+
+.username {
+    color: #fff;
+    text-shadow:
+        0 0 3px #667eea,
+        0 0 8px #764ba2,
+        0 0 10px #87CEFA;
+    font-style: italic;
+    font-weight: bold;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    padding: 2px 5px;
+    border-radius: 5px;
+}
+
+.filtros-buttons {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+}
+
+.btn-filtrar {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 20px;
+    cursor: pointer;
+    font-family: 'Cascadia Code', monospace;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    text-shadow:
+        0 0 0px rgb(0, 0, 0),
+        0 0 0px rgb(127, 46, 219),
+        0 0 5px rgb(0, 0, 0);
+}
+
+.btn-filtrar:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+}
+
+.btn-limpiar {
+    background: rgba(239, 68, 68, 0.3);
+    color: white;
+    border: none;
+    padding: 10px 15px;
+    border-radius: 20px;
+    cursor: pointer;
+    font-family: 'Cascadia Code', monospace;
+    transition: all 0.3s ease;
+    white-space: nowrap;
+    text-shadow:
+        0 0 0px rgb(0, 0, 0),
+        0 0 0px rgb(127, 46, 219),
+        0 0 5px rgb(0, 0, 0);
+}
+
+.btn-limpiar:hover {
+    background: rgba(239, 68, 68, 0.5);
+    transform: translateY(-2px);
+}
+
+.filtros-content {
+    animation: slideDown 0.3s ease;
+    margin-top: 15px;
+    padding-top: 15px;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+@keyframes slideDown {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.filtro-busqueda {
+    margin-bottom: 15px;
+}
+
+.input-busqueda {
+    width: 100%;
+    padding: 10px 15px;
+    border: 1px solid rgba(102, 126, 234, 0.3);
+    border-radius: 8px;
+    background: rgba(255, 255, 255, 0.1);
+    color: white;
+    font-family: 'Cascadia Code', monospace;
+}
+
+.input-busqueda:focus {
+    outline: none;
+    border-color: #667eea;
+    background: rgba(255, 255, 255, 0.15);
+}
+
+.filtro-orden {
+    display: flex;
+    flex-direction: column;
+}
+
+.filtro-busqueda label {
+    margin-bottom: 8px;
+    color: #87CEFA;
+    font-family: 'Cascadia Code', monospace;
+    font-weight: 600;
+}
+
+.filtro-orden label {
+    margin-bottom: 8px;
+    color: #87CEFA;
+    font-family: 'Cascadia Code', monospace;
+    font-weight: 600;
+}
+
+.select-orden {
+    padding: 10px 15px;
+    border: 1px solid rgba(102, 126, 234, 0.3);
+    border-radius: 8px;
+    background: rgba(255, 255, 255, 0.1);
+    color: white;
+    font-family: 'Cascadia Code', monospace;
+    cursor: pointer;
+}
+
+.select-orden:focus {
+    outline: none;
+    border-color: #667eea;
+    background: rgba(255, 255, 255, 0.15);
+}
+
+.select-orden option {
+    background: #1a1a3a;
+    color: white;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .filtrador-container {
+        padding: 12px;
+    }
+
+    .filtrador-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 15px;
+    }
+
+    .welcome-message {
+        text-align: center;
+        width: 100%;
+        order: 2;
+    }
+
+    .filtros-buttons {
+        width: 100%;
+        justify-content: center;
+        order: 1;
+    }
+
+    .btn-filtrar,
+    .btn-limpiar {
+        flex: 1;
+        max-width: 120px;
+    }
+
+    .filtros-content {
+        margin-top: 10px;
+        order: 3;
+    }
+}
