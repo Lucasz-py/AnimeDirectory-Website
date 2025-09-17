@@ -31,6 +31,7 @@ const DirectorioAnimes: React.FC<DirectorioAnimesProps> = ({ user, onLogout }) =
         estado: 'Visto',
         rating: 0
     });
+    const [animeDetalles, setAnimeDetalles] = useState<Anime | null>(null); // Estado para el anime en detalle
 
     console.log('🔍 DirectorioAnimes renderizado - user:', user?.id, 'loading:', loading);
 
@@ -280,6 +281,16 @@ const DirectorioAnimes: React.FC<DirectorioAnimesProps> = ({ user, onLogout }) =
         setMostrarFormulario(false);
     };
 
+    // Función para mostrar detalles del anime
+    const mostrarDetalles = (anime: Anime) => {
+        setAnimeDetalles(anime);
+    };
+
+    // Función para cerrar detalles del anime
+    const cerrarDetalles = () => {
+        setAnimeDetalles(null);
+    };
+
     const handleLogout = () => {
         if (onLogout) {
             console.log('🚪 Cerrando sesión');
@@ -444,6 +455,31 @@ const DirectorioAnimes: React.FC<DirectorioAnimesProps> = ({ user, onLogout }) =
                     </div>
                 )}
 
+                {/* Overlay para detalles del anime */}
+                {animeDetalles && (
+                    <div className="detalles-overlay" onClick={cerrarDetalles}>
+                        <div className="detalles-contenido" onClick={(e) => e.stopPropagation()}>
+                            <button className="cerrar-detalles" onClick={cerrarDetalles}>✕</button>
+                            <div className="detalles-portada">
+                                <img src={animeDetalles.portada} alt={animeDetalles.titulo} />
+                                <div className="detalles-estado">{animeDetalles.estado}</div>
+                                {animeDetalles.rating > 0 && (
+                                    <div className="detalles-rating">⭐ {animeDetalles.rating}</div>
+                                )}
+                            </div>
+                            <div className="detalles-info">
+                                <h2 className="detalles-titulo">{animeDetalles.titulo}</h2>
+                                <p className="detalles-descripcion">{animeDetalles.descripcion}</p>
+                                <div className="detalles-generos">
+                                    {animeDetalles.generos.map((genero, index) => (
+                                        <span key={index} className="genero-tag">{genero}</span>
+                                    ))}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                )}
+
                 {/* Lista de animes */}
                 <div className="animes-grid">
                     {animesFiltrados.length === 0 ? (
@@ -479,6 +515,13 @@ const DirectorioAnimes: React.FC<DirectorioAnimesProps> = ({ user, onLogout }) =
 
                                 <div className="anime-actions">
                                     <button
+                                        onClick={() => mostrarDetalles(anime)}
+                                        className="btn-detalles"
+                                        title="Ver detalles"
+                                    >
+                                        🔼
+                                    </button>
+                                    <button
                                         onClick={() => iniciarEdicion(anime)}
                                         className="btn-editar"
                                     >
@@ -497,7 +540,7 @@ const DirectorioAnimes: React.FC<DirectorioAnimesProps> = ({ user, onLogout }) =
                     )}
                 </div>
             </div>
-        </div>
+        </div >
     );
 };
 

@@ -11,10 +11,67 @@ interface FiltradorAnimesProps {
 
 type CriterioOrden = 'nombre' | 'fecha' | 'fecha2' | 'favorito' | 'rating';
 
+// Función para normalizar texto (eliminar acentos y convertir a minúsculas)
+const normalizarTexto = (texto: string): string => {
+    return texto
+        .normalize('NFD')
+        .replace(/[\u0300-\u036f]/g, '')
+        .toLowerCase();
+};
+
+// Clave base para localStorage
+const CRITERIO_ORDEN_KEY = 'animeSortCriteria';
+
+// Función segura para localStorage con prefijo de usuario
+const safeLocalStorage = {
+    getItem: (key: string, userId: string | null = null): string | null => {
+        try {
+            // Para usuarios no autenticados, usar una clave de sesión temporal
+            const storageKey = userId ? `${userId}_${key}` : `guest_${key}`;
+            return localStorage.getItem(storageKey);
+        } catch (error) {
+            console.error('Error al acceder a localStorage:', error);
+            return null;
+        }
+    },
+    setItem: (key: string, value: string, userId: string | null = null): void => {
+        try {
+            const storageKey = userId ? `${userId}_${key}` : `guest_${key}`;
+            localStorage.setItem(storageKey, value);
+        } catch (error) {
+            console.error('Error al guardar en localStorage:', error);
+        }
+    }
+};
+
 const FiltradorAnimes: React.FC<FiltradorAnimesProps> = ({ animes, user, userProfile, onFiltroChange }) => {
+    // Obtener el criterio guardado o usar 'fecha' por defecto
     const [criterioOrden, setCriterioOrden] = useState<CriterioOrden>('fecha');
     const [busqueda, setBusqueda] = useState('');
     const [mostrarFiltros, setMostrarFiltros] = useState(false);
+    const [isInitialized, setIsInitialized] = useState(false);
+
+    // Cargar preferencias guardadas cuando el usuario esté disponible
+    useEffect(() => {
+        if (!isInitialized) {
+            const userId = user?.id || null;
+            const guardado = safeLocalStorage.getItem(CRITERIO_ORDEN_KEY, userId);
+
+            // Validar que el valor guardado es un criterio válido
+            if (guardado && ['nombre', 'fecha', 'fecha2', 'favorito', 'rating'].includes(guardado)) {
+                setCriterioOrden(guardado as CriterioOrden);
+            }
+            setIsInitialized(true);
+        }
+    }, [user, isInitialized]);
+
+    // Guardar el criterio en localStorage cuando cambie
+    useEffect(() => {
+        if (isInitialized) {
+            const userId = user?.id || null;
+            safeLocalStorage.setItem(CRITERIO_ORDEN_KEY, criterioOrden, userId);
+        }
+    }, [criterioOrden, user, isInitialized]);
 
     // Función para obtener el nombre de usuario a mostrar
     const getDisplayName = () => {
@@ -35,10 +92,17 @@ const FiltradorAnimes: React.FC<FiltradorAnimesProps> = ({ animes, user, userPro
 
         // Aplicar filtro de búsqueda
         if (busqueda) {
-            animesFiltrados = animesFiltrados.filter(anime =>
-                anime.titulo.toLowerCase().includes(busqueda.toLowerCase()) ||
-                anime.generos.some(genero => genero.toLowerCase().includes(busqueda.toLowerCase()))
-            );
+            const busquedaNormalizada = normalizarTexto(busqueda);
+
+            animesFiltrados = animesFiltrados.filter(anime => {
+                const tituloNormalizado = normalizarTexto(anime.titulo);
+                const generosNormalizados = anime.generos.map(genero => normalizarTexto(genero));
+
+                return (
+                    tituloNormalizado.includes(busquedaNormalizada) ||
+                    generosNormalizados.some(genero => genero.includes(busquedaNormalizada))
+                );
+            });
         }
 
         // Aplicar ordenamiento

@@ -485,3 +485,146 @@
     transform: translateY(-2px);
     box-shadow: 0 5px 15px rgba(244, 67, 54, 0.4);
 }
+
+/* Estilos para el overlay de detalles - VERSIÓN MEJORADA */
+.detalles-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.7);
+    backdrop-filter: blur(5px);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+    padding: 20px;
+}
+
+.detalles-contenido {
+    position: relative;
+    background: rgba(15, 15, 35, 0.95);
+    backdrop-filter: blur(20px);
+    border-radius: 16px;
+    border: 2px solid rgba(173, 14, 236, 0.3);
+    box-shadow: 0 0 20px rgba(173, 14, 236, 0.5);
+    max-width: 600px;
+    width: 100%;
+    max-height: 90vh;
+    overflow-y: auto;
+    color: white;
+}
+
+.cerrar-detalles {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    background: rgba(239, 68, 68, 0.8);
+    color: white;
+    border: none;
+    border-radius: 50%;
+    width: 30px;
+    height: 30px;
+    cursor: pointer;
+    font-size: 16px;
+    z-index: 20;
+    /* Aumentamos el z-index para que esté por encima */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.detalles-portada {
+    position: relative;
+    height: 250px;
+    overflow: hidden;
+}
+
+.detalles-portada img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.detalles-estado {
+    position: absolute;
+    top: 15px;
+    right: 50px;
+    /* Cambiamos de 15px a 50px para dejar espacio al botón X */
+    background: rgba(0, 0, 0, 0.8);
+    color: white;
+    padding: 8px 15px;
+    border-radius: 20px;
+    font-weight: 600;
+    z-index: 10;
+    /* Menor z-index que el botón de cerrar */
+}
+
+.detalles-rating {
+    position: absolute;
+    top: 15px;
+    left: 15px;
+    background: rgba(0, 0, 0, 0.8);
+    color: gold;
+    padding: 8px 15px;
+    border-radius: 20px;
+    font-weight: 600;
+    z-index: 10;
+    /* Menor z-index que el botón de cerrar */
+}
+
+.detalles-info {
+    padding: 20px;
+}
+
+.detalles-titulo {
+    font-size: 2rem;
+    color: #ffffff;
+    margin-bottom: 1rem;
+    text-shadow: 0 0 5px #240eec, 0 0 0px #c715e0, 0 0 8px #101bc0;
+}
+
+.detalles-descripcion {
+    font-size: 1rem;
+    line-height: 1.6;
+    margin-bottom: 1.5rem;
+    opacity: 0.9;
+    white-space: pre-line;
+    /* Para respetar los saltos de línea */
+}
+
+.detalles-generos span {
+    font-size: 1.1rem;
+    /* Aumenta el tamaño de fuente */
+    padding: 8px 20px;
+    /* Más espacio interno */
+    border-radius: 16px;
+    background: rgba(4, 19, 235, 0.1);
+    /* Fondo sutil */
+    color: #ffffff;
+    /* Color suave tipo rosa pastel */
+    font-weight: 600;
+    text-shadow: 0 0 4px #780cdd;
+    margin: 4px;
+}
+
+/* Estilo para el botón de detalles */
+.btn-detalles {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: 4px 8px;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    font-size: 1rem;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    font-family: 'Cascadia Code', monospace;
+    flex: 1;
+}
+
+.btn-detalles:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+}
